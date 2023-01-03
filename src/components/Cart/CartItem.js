@@ -1,7 +1,10 @@
 import classes from '../../styles/CartItem.module.css';
 
 export default function CartItem(props) {
-    const price = `$${props.price.toFixed(2)}`;
+    const price = new Intl.NumberFormat('en-US', {
+        style: 'currency',
+        currency: 'USD',
+    }).format(props.price);
 
     return (
         <li className={classes['cart-item']}>

@@ -11,6 +11,8 @@ html {
 body {
     margin: 0;
     background-color: #3f3f3f;
+    font-size: 1rem;
+    line-height: 150%;
 }
 
 h1,
@@ -20,9 +22,7 @@ h4,
 h5,
 h6 {
     font-weight: 700;
-}
-p {
-    font-size: 1rem;
+    line-height: 150%;
 }
 
 h1 {
