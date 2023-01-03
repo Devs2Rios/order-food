@@ -3,27 +3,25 @@ import classes from '../../styles/Cart.module.css';
 import { ModalContext } from '../../store/modal-context';
 import { CartContext } from '../../store/cart-context';
 import Modal from '../UI/Modal';
+import CartItem from './CartItem';
 
 export default function Cart() {
     const modalctx = useContext(ModalContext),
         cartctx = useContext(CartContext),
+        hasItems = Boolean(Object.keys(cartctx.cartItems).length),
         cartItems = (
             <ul className={classes['cart-items']}>
-                {cartctx.cartItems.map(item => (
-                    <li>{item.name}</li>
-                ))}
+                {Object.entries(cartctx.cartItems).map(([id, value]) => {
+                    return <CartItem key={`cart-${id}`} id={id} {...value} />;
+                })}
             </ul>
-        ),
-        totalAmount = new Intl.NumberFormat('en-US', {
-            style: 'currency',
-            currency: 'USD',
-        }).format(cartctx.total());
+        );
     return (
         <Modal>
             {cartItems}
             <div className={classes.total}>
                 <span>Total Amount</span>
-                <span>{totalAmount}</span>
+                <span>{cartctx.totalPrice()}</span>
             </div>
             <div className={classes.actions}>
                 <button
@@ -32,7 +30,7 @@ export default function Cart() {
                 >
                     Close
                 </button>
-                <button className={classes.button}>Order</button>
+                {hasItems && <button className={classes.button}>Order</button>}
             </div>
         </Modal>
     );

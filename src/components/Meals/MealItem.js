@@ -14,7 +14,7 @@ export default function MealItem(props) {
                 <div className={classes.price}>{price}</div>
             </div>
             <div>
-                <MealItemForm name={props.name} />
+                <MealItemForm name={props.name} price={props.price} />
             </div>
         </li>
     );

@@ -1,25 +1,84 @@
-import { createContext, useState } from 'react';
+import { createContext, useReducer } from 'react';
+
+const defaultCart = {},
+    cartReducer = (state, action) => {
+        switch (action.type) {
+            case 'ADD':
+                return {
+                    ...state,
+                    [action.item.id]: {
+                        name: action.item.name,
+                        amount: action.item.amount,
+                        price: action.item.price,
+                    },
+                };
+            case 'DEL':
+                delete state[action.id];
+                return { ...state };
+            case 'SUM':
+                return {
+                    ...state,
+                    [action.id]: {
+                        ...state[action.id],
+                        amount: state[action.id].amount + action.inc,
+                    },
+                };
+            default:
+                return state;
+        }
+    };
 
 export const CartContext = createContext({
-    cartItems: [],
-    total: () => {},
+    cartItems: {},
+    totalItems: () => {},
+    totalPrice: () => {},
     onAdd: () => {},
     onRemove: () => {},
+    onSum: () => {},
 });
 
 export default function CartContextProvider(props) {
-    const [cartItems, setCartItems] = useState([]),
-        total = () => {
-            return cartItems.reduce((item, cval) => item.price + cval, 0);
+    const [cartState, dispatchCartAction] = useReducer(
+            cartReducer,
+            defaultCart
+        ),
+        totalItems = () => {
+            return Object.values(cartState).reduce(
+                (cval, item) => item.amount + cval,
+                0
+            );
         },
-        onAdd = () => {
-            setCartItems(prevCartItems => prevCartItems.push());
+        totalPrice = () => {
+            return new Intl.NumberFormat('en-US', {
+                style: 'currency',
+                currency: 'USD',
+            }).format(
+                Object.values(cartState).reduce(
+                    (cval, item) => item.price * item.amount + cval,
+                    0
+                )
+            );
         },
-        onRemove = itemIndex => {
-            setCartItems(prevCartItems => prevCartItems.splice(itemIndex, 1));
+        onAdd = item => {
+            dispatchCartAction({ type: 'ADD', item: item });
+        },
+        onRemove = id => {
+            dispatchCartAction({ type: 'DEL', id: id });
+        },
+        onSum = (id, inc) => {
+            dispatchCartAction({ type: 'SUM', id: id, inc: inc });
         };
     return (
-        <CartContext.Provider value={{ cartItems, total, onAdd, onRemove }}>
+        <CartContext.Provider
+            value={{
+                cartItems: cartState,
+                totalItems,
+                totalPrice,
+                onAdd,
+                onRemove,
+                onSum,
+            }}
+        >
             {props.children}
         </CartContext.Provider>
     );
