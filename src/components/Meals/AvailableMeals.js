@@ -5,7 +5,7 @@ import MealItem from './MealItem';
 import { DataContext } from '../../store/data-context';
 
 export default function AvailableMeals() {
-    const { meals } = useContext(DataContext);
+    const { meals, loading, errorMessage } = useContext(DataContext);
     const mealsList = meals.map((meal, i) => {
         return (
             <MealItem
@@ -18,13 +18,15 @@ export default function AvailableMeals() {
     });
     return (
         <section className={classes.meals}>
-            {
-                meals ?
-                    <Card>
-                        <ul>{mealsList}</ul>
-                    </Card> :
-                    <p>There was an error fetching the data</p>
-            }
+            <Card>
+                {
+                    loading && !meals && !errorMessage ? <p>Loading...</p> :
+                        !loading && meals && !errorMessage ?
+                            <ul>{mealsList}</ul>
+                            :
+                            <p>{errorMessage || 'No meals found!'}</p>
+                }
+            </Card>
         </section>
     );
 }
