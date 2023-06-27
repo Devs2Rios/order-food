@@ -1,13 +1,15 @@
+import { useContext } from 'react';
 import classes from '../../styles/AvailableMeals.module.css';
-import { DUMMY_MEALS } from '../../utils/dummy-data';
 import Card from '../UI/Card';
 import MealItem from './MealItem';
+import { DataContext } from '../../store/data-context';
 
 export default function AvailableMeals() {
-    const mealsList = DUMMY_MEALS.map(meal => {
+    const { meals } = useContext(DataContext);
+    const mealsList = meals.map((meal, i) => {
         return (
             <MealItem
-                key={meal.id}
+                key={`meal-${i}`}
                 name={meal.name}
                 description={meal.description}
                 price={meal.price}
@@ -16,9 +18,13 @@ export default function AvailableMeals() {
     });
     return (
         <section className={classes.meals}>
-            <Card>
-                <ul>{mealsList}</ul>
-            </Card>
+            {
+                meals ?
+                    <Card>
+                        <ul>{mealsList}</ul>
+                    </Card> :
+                    <p>There was an error fetching the data</p>
+            }
         </section>
     );
 }
