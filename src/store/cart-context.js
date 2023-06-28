@@ -23,6 +23,8 @@ const defaultCart = {},
                         amount: state[action.id].amount + action.inc,
                     },
                 };
+            case 'CLEAR':
+                return {};
             default:
                 return state;
         }
@@ -30,18 +32,19 @@ const defaultCart = {},
 
 export const CartContext = createContext({
     cartItems: {},
-    totalItems: () => {},
-    totalPrice: () => {},
-    onAdd: () => {},
-    onRemove: () => {},
-    onSum: () => {},
+    totalItems: () => { },
+    totalPrice: () => { },
+    onAdd: () => { },
+    onRemove: () => { },
+    onSum: () => { },
+    onClear: () => { },
 });
 
 export default function CartContextProvider(props) {
     const [cartState, dispatchCartAction] = useReducer(
-            cartReducer,
-            defaultCart
-        ),
+        cartReducer,
+        defaultCart
+    ),
         totalItems = () => {
             return Object.values(cartState).reduce(
                 (cval, item) => item.amount + cval,
@@ -67,6 +70,9 @@ export default function CartContextProvider(props) {
         },
         onSum = (id, inc) => {
             dispatchCartAction({ type: 'SUM', id: id, inc: inc });
+        },
+        onClear = () => {
+            dispatchCartAction({ type: 'CLEAR' });
         };
     return (
         <CartContext.Provider
@@ -77,6 +83,7 @@ export default function CartContextProvider(props) {
                 onAdd,
                 onRemove,
                 onSum,
+                onClear
             }}
         >
             {props.children}
