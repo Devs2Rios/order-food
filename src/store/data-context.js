@@ -13,13 +13,17 @@ export default function DataContextProvider(props) {
         [loading, setLoading] = useState(false),
         [errorMessage, setErrorMessage] = useState(null),
         getMeals = useCallback(async () => {
+            const errMsg = 'There was an error fetching the data, please reload the page and try again!';
             setLoading(true);
             try {
                 const response = await fetch(`${REACT_APP_DB_URL}/meals.json`);
+                if (!response.ok) {
+                    throw new Error(errMsg);
+                }
                 const data = await response.json();
                 setMeals(Object.values(data));
             } catch (_) {
-                setErrorMessage('There was an error fetching the data, please reload the page and try again');
+                setErrorMessage(errMsg);
             }
             setLoading(false);
         }, []);

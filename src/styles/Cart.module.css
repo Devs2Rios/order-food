@@ -27,10 +27,13 @@
   padding: 0.5rem 2rem;
   border-radius: 25px;
   margin-left: 1rem;
+  transition: all 0.25s ease-in-out;
+  width: 150px;
 }
 
 .actions button:hover,
-.actions button:active {
+.actions button:active,
+.actions button:focus {
   background-color: #5a1a01;
   border-color: #5a1a01;
   color: white;

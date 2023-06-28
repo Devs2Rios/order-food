@@ -3,6 +3,7 @@ import classes from '../../styles/AvailableMeals.module.css';
 import Card from '../UI/Card';
 import MealItem from './MealItem';
 import { DataContext } from '../../store/data-context';
+import ErrorMsg from '../UI/ErrorMsg';
 
 export default function AvailableMeals() {
     const { meals, loading, errorMessage } = useContext(DataContext);
@@ -24,7 +25,7 @@ export default function AvailableMeals() {
                         !loading && meals && !errorMessage ?
                             <ul>{mealsList}</ul>
                             :
-                            <p>{errorMessage || 'No meals found!'}</p>
+                            <ErrorMsg message={errorMessage || 'No meals found!'} />
                 }
             </Card>
         </section>
