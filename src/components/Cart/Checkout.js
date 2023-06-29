@@ -15,11 +15,14 @@ export default function Checkout({ onClick }) {
             postal: true,
             city: true
         }),
+        [isSubmitting, setIsSubmitting] = useState(false),
+        [didSubmit, setDidSubmit] = useState(false),
         nameRef = useRef(''),
         streetRef = useRef(''),
         postalRef = useRef(''),
         cityRef = useRef(''),
         handleSubmit = async (e) => {
+            setIsSubmitting(true)
             e.preventDefault();
             const
                 name = nameRef.current.value,
@@ -53,48 +56,63 @@ export default function Checkout({ onClick }) {
                         throw new Error('Something went wrong');
                     }
                     cartCtx.onClear();
-                    onClick();
+                    setDidSubmit(true);
                 } catch (_) {
                     setFormError('There was an error with your request, reload the page and try again');
                 }
             }
+            setIsSubmitting(false);
         };
 
     return (
-        <form className={classes.form} onSubmit={handleSubmit}>
-            <CheckoutInput
-                id='name'
-                label='Your Name'
-                isValid={inputsValidity.name}
-                invalidMessage='Please enter a valid name'
-                ref={nameRef}
-            />
-            <CheckoutInput
-                id='street'
-                label='Street'
-                isValid={inputsValidity.street}
-                invalidMessage='Please enter a valid street'
-                ref={streetRef}
-            />
-            <CheckoutInput
-                id='postal'
-                label='Postal Code'
-                isValid={inputsValidity.postal}
-                invalidMessage='Please enter a valid postal code (5 digits)'
-                ref={postalRef}
-            />
-            <CheckoutInput
-                id='city'
-                label='City'
-                isValid={inputsValidity.city}
-                invalidMessage='Please enter a valid city'
-                ref={cityRef}
-            />
-            <div className={classes.actions}>
-                <button onClick={onClick}>Cancel</button>
-                <button type='submit'>Confirm</button>
-            </div>
-            {formError && <ErrorMsg message={formError} />}
-        </form>
+        <>
+            {didSubmit ?
+                (<div className={classes.success}>
+                    <p>Order Confirmed!</p>
+                    <button onClick={() => { setDidSubmit(false); onClick() }}>Close</button>
+                </div>)
+                :
+                (<form className={classes.form} onSubmit={handleSubmit}>
+                    <CheckoutInput
+                        id='name'
+                        label='Your Name'
+                        isValid={inputsValidity.name}
+                        invalidMessage='Please enter a valid name'
+                        ref={nameRef}
+                    />
+                    <CheckoutInput
+                        id='street'
+                        label='Street'
+                        isValid={inputsValidity.street}
+                        invalidMessage='Please enter a valid street'
+                        ref={streetRef}
+                    />
+                    <CheckoutInput
+                        id='postal'
+                        label='Postal Code'
+                        isValid={inputsValidity.postal}
+                        invalidMessage='Please enter a valid postal code (5 digits)'
+                        ref={postalRef}
+                    />
+                    <CheckoutInput
+                        id='city'
+                        label='City'
+                        isValid={inputsValidity.city}
+                        invalidMessage='Please enter a valid city'
+                        ref={cityRef}
+                    />
+                    <div className={classes.actions}>
+                        {
+                            isSubmitting
+                                ? <button disabled={true}>Wait...</button> :
+                                <>
+                                    <button onClick={onClick}>Cancel</button>
+                                    <button type='submit'>Confirm</button>
+                                </>
+                        }
+                    </div>
+                    {formError && <ErrorMsg message={formError} />}
+                </form>)}
+        </>
     )
 }
